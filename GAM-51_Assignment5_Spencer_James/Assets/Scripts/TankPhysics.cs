@@ -5,13 +5,21 @@ using UnityEngine;
 public class TankPhysics : MonoBehaviour
 {
     #region Variables
-    [SerializeField] private Rigidbody rb;
+    private Rigidbody rb;
     private Vector3 massOffset = new Vector3(0f, -0.25f, 0f);
-    public float acceleration = 0f;
-    public float braking = 0f;
-    public float steering = 0f;
+    [SerializeField] private float _accelerationPower = 5f;
+    [SerializeField] private float _brakingPower = 5f;
     [SerializeField] private float enginePower = 10.0f;
     [SerializeField] private float brakingPower = 5.0f;
+    [SerializeField] private List<WheelCollider> _rightWheels = new List<WheelCollider>();
+    [SerializeField] private List<WheelCollider> _leftWheels = new List<WheelCollider>();
+    #endregion
+
+    #region Properties
+    public float AccelerationPower { get { return this._accelerationPower; } }
+    public float BrakingPower { get { return this._brakingPower; } }
+    public List<WheelCollider> RightWheels { get { return this._rightWheels; } }
+    public List<WheelCollider> LeftWheels { get { return this._leftWheels; } }
     #endregion
 
     #region Methods
@@ -19,12 +27,6 @@ public class TankPhysics : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         rb.centerOfMass = massOffset;
-	}
-
-	void FixedUpdate()
-    {
-        rb.AddForce(Vector3.forward * enginePower, ForceMode.Force);
-        rb.AddForce(Vector3.back * brakingPower, ForceMode.Force);
-	}
+    }
     #endregion
 }

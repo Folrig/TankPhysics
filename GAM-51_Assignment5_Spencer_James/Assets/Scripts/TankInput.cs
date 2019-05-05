@@ -14,11 +14,37 @@ public class TankInput : MonoBehaviour
         tankPhysics = GetComponent<TankPhysics>();
     }
 
-    void Update()
+    void FixedUpdate()
     {
-        tankPhysics.acceleration = Input.GetAxis("Vertical");
-        tankPhysics.braking = Input.GetAxis("Jump");
-        tankPhysics.steering = Input.GetAxis("Horizontal");
+        if (Input.GetAxis("Vertical") > 0.0f)
+        {
+            foreach (WheelCollider wheel in tankPhysics.LeftWheels)
+            {
+                wheel.motorTorque += Input.GetAxis("Vertical") * tankPhysics.AccelerationPower;
+            }
+        }
+        if (Input.GetAxis("Vertical") < 0.0f)
+        {
+            foreach (WheelCollider wheel in tankPhysics.LeftWheels)
+            {
+                wheel.brakeTorque += Input.GetAxis("Vertical") * tankPhysics.BrakingPower;
+            }
+        }
+        if (Input.GetAxis("Fire1") > 0.01f)
+        {
+            foreach (WheelCollider wheel in tankPhysics.LeftWheels)
+            {
+                wheel.motorTorque += Input.GetAxis("Fire1") * tankPhysics.AccelerationPower;
+            }
+
+        }
+        if (Input.GetAxis("Fire1") < 0.01f)
+        {
+            foreach (WheelCollider wheel in tankPhysics.LeftWheels)
+            {
+                wheel.brakeTorque += Input.GetAxis("Fire1") * tankPhysics.BrakingPower;
+            }
+        }
     }
     #endregion
 }
