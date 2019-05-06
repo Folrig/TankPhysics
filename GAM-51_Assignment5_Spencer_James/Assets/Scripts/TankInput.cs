@@ -5,45 +5,43 @@ using UnityEngine;
 public class TankInput : MonoBehaviour
 {
     #region Variables
-    private TankPhysics tankPhysics;
+    public TankPhysics _tankPhysics;
+    private float _rightAcceleration;
+    private float _leftAcceleration;
+    #endregion
+
+    #region Properties
+    public float RightAcceleration { get { return this._rightAcceleration; } }
+    public float LeftAcceleration { get { return this._leftAcceleration; } }
     #endregion
 
     #region Methods
     void Start()
     {
-        tankPhysics = GetComponent<TankPhysics>();
+        _tankPhysics = GetComponent<TankPhysics>();
     }
 
+    // Capture input in Update
+    void Update()
+    {
+        _rightAcceleration = Input.GetAxis("Vertical");
+        _leftAcceleration = Input.GetAxis("Fire1");
+    }
+
+    // Perform physics calculations in FixedUpdate
+    // brakeTorque must always be positive
+    // Can be refactored to avoid duplication
     void FixedUpdate()
     {
-        if (Input.GetAxis("Vertical") > 0.0f)
+        foreach (WheelCollider wheel in _tankPhysics.RightWheels)
         {
-            foreach (WheelCollider wheel in tankPhysics.LeftWheels)
-            {
-                wheel.motorTorque += Input.GetAxis("Vertical") * tankPhysics.AccelerationPower;
-            }
+            wheel.motorTorque = 0f;
+            wheel.motorTorque = _rightAcceleration * _tankPhysics.AccelerationPower;
         }
-        if (Input.GetAxis("Vertical") < 0.0f)
+        foreach (WheelCollider wheel in _tankPhysics.LeftWheels)
         {
-            foreach (WheelCollider wheel in tankPhysics.LeftWheels)
-            {
-                wheel.brakeTorque += Input.GetAxis("Vertical") * tankPhysics.BrakingPower;
-            }
-        }
-        if (Input.GetAxis("Fire1") > 0.01f)
-        {
-            foreach (WheelCollider wheel in tankPhysics.LeftWheels)
-            {
-                wheel.motorTorque += Input.GetAxis("Fire1") * tankPhysics.AccelerationPower;
-            }
-
-        }
-        if (Input.GetAxis("Fire1") < 0.01f)
-        {
-            foreach (WheelCollider wheel in tankPhysics.LeftWheels)
-            {
-                wheel.brakeTorque += Input.GetAxis("Fire1") * tankPhysics.BrakingPower;
-            }
+            wheel.motorTorque = 0f;
+            wheel.motorTorque = _leftAcceleration * _tankPhysics.AccelerationPower;
         }
     }
     #endregion
